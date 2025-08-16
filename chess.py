@@ -6,6 +6,8 @@
 #
 # THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+# base piece class
+
 class piece:
     def __init__(self, boardIndex: int, colour: str) -> None:
         """Initialises a chess piece
@@ -40,16 +42,38 @@ class piece:
 
         self.position = newBoardIndex
 
+# standard chess pieces definitions
+
+class king(piece):
+    pass
+
+class queen(piece):
+    pass
+
+class rook(piece):
+    pass
+
+class bishop(piece):
+    pass
+
+class knight(piece):
+    pass
+
+class pawn(piece):
+    pass
+
+# board class
+
 class board:
     boardSideLength = 8  # default chess board
 
     pieceMappings = {
-            "k": piece,
-            "q": piece,
-            "r": piece,
-            "b": piece,
-            "n": piece,
-            "p": piece
+            "k": king,
+            "q": queen,
+            "r": rook,
+            "b": bishop,
+            "n": knight,
+            "p": pawn
             }
     
     def convertSquareToIndex(self, square: str) -> int:
