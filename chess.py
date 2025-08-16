@@ -44,6 +44,12 @@ class board:
     boardSideLength = 8  # default chess board
 
     pieceMappings = {
+            "k": piece,
+            "q": piece,
+            "r": piece,
+            "b": piece,
+            "n": piece,
+            "p": piece
             }
     
     def __init__(self, startingFen: str) -> None:
@@ -55,6 +61,34 @@ class board:
         This constructor takes a FEN code and parses it into a board object"""
         # turns will be managed by the client
         self.boardPieces = []
+        self.sideLength = board.boardSideLength
+
+        # process the FEN code
+        startingFen.strip()
+        startingFen = startingFen.replace("/", " ")
+
+        # split into the "components"
+        components = [component for component in startingFen.split(" ") if not component.isspace()]
+        # clean up the original startingFen variable
+        del startingFen
+
+        for componentsIndex in range(board.boardSideLength):
+            chessLineSum = 0
+            for pieceLetter in components[componentsIndex]:
+                if pieceLetter.isdecimal():
+                    chessLineSum += int(pieceLetter)
+                    for _ in pieceLetter:
+                        self.boardPieces.append(None)
+                    continue  # ignore interpreting the letter as a piece
+                if pieceLetter.isupper():
+                    pieceColour = "w"
+                else:
+                    pieceColour = "b"
+
+                try:
+                    self.boardPieces.append((board.pieceMappings[pieceLetter.casefold()])(len(self.boardPieces), pieceColour))
+                except KeyError:
+                    raise Exception("Invalid Piece in FEN")
     
     def checkMove(self, origin: int, target: int) -> bool:
         """Validates a move based on an origin point and a target square
