@@ -52,6 +52,14 @@ class board:
             "p": piece
             }
     
+    def convertSquareToIndex(self, square: str) -> int:
+        square = square.strip()
+        if not len(square) >= 2:
+            raise Exception("Square is invalid")
+        # ord square[0] - 97 converts the letter into an index of the alphabet
+        return ((self.sideLength * (self.sideLength - int(square[1 : ]))) + 
+                (ord(square[0].casefold()) - 97))
+
     def __init__(self, startingFen: str) -> None:
         """Initialises a chess board
 
@@ -59,12 +67,17 @@ class board:
         :startingFen: str - the associated FEN code for the chess game
 
         This constructor takes a FEN code and parses it into a board object"""
-        # turns will be managed by the client
+        # variable declarations
         self.boardPieces = []
+        self.castling = []
         self.sideLength = board.boardSideLength
+        self.playerTurn = None
+        self.enPassantSquare = None
+        self.fiftyMovesClock = 0
+        self.fullMoveClock = 1
 
         # process the FEN code
-        startingFen.strip()
+        startingFen = startingFen.strip()
         startingFen = startingFen.replace("/", " ")
 
         # split into the "components"
@@ -72,7 +85,11 @@ class board:
         # clean up the original startingFen variable
         del startingFen
 
-        for componentsIndex in range(board.boardSideLength):
+        # validate number of components
+        if len(components) != self.sideLength + 5:
+            raise Exception("FEN is not long enough (potential missing info)")
+
+        for componentsIndex in range(self.sideLength):
             chessLineSum = 0
             for pieceLetter in components[componentsIndex]:
                 if pieceLetter.isdecimal():
@@ -88,7 +105,26 @@ class board:
                 try:
                     self.boardPieces.append((board.pieceMappings[pieceLetter.casefold()])(len(self.boardPieces), pieceColour))
                 except KeyError:
-                    raise Exception("Invalid Piece in FEN")
+                    raise Exception("Invalid Piece in FEN (may be caused by invalid side length)")
+                
+                chessLineSum += 1
+            if chessLineSum != self.sideLength:
+                raise Exception("Incorrect number of pieces")
+        
+        # sideLength coincides with the index of the colour (colour comes straight after pieces, and pieces end at self.sideLength)
+        if components[self.sideLength] not in ("w", "b"):
+            raise Exception("Invalid colour turn")
+        self.playerTurn = components[self.sideLength]
+
+        for castlingRight in components[self.sideLength + 1]:
+            if castlingRight.casefold() in ("q", "k"):
+                self.castling.append(castlingRight)
+
+        if components[self.sideLength + 2] != "-":
+            self.enPassantSquare = self.convertSquareToIndex(components[self.sideLength + 2])
+
+        self.fiftyMovesClock = int(components[self.sideLength + 3])
+        self.fullMoveClock = int(components[self.sideLength + 4])
     
     def checkMove(self, origin: int, target: int) -> bool:
         """Validates a move based on an origin point and a target square
