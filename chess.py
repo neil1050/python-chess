@@ -48,25 +48,39 @@ class king(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
         super().getMoves(obstacles, sideLength)
 
+        # king can move one square in any of the 8 ordinal directions
+
 class queen(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
         super().getMoves(obstacles, sideLength)
+
+        # queen can move any number of squares in the 8 ordinal directions
 
 class rook(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
         super().getMoves(obstacles, sideLength)
 
+        # rook can move any number of squares in a straight line
+
 class bishop(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
         super().getMoves(obstacles, sideLength)
+
+        # bishop can move any number of squares diagonally
 
 class knight(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
         super().getMoves(obstacles, sideLength)
 
+        # knight moves 2 squares in a straight line (strictly), then moves one in the other axis
+
 class pawn(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
         super().getMoves(obstacles, sideLength)
+
+        # pawns can move 1 square forward (2 if it hasn't moved yet (ie on second or sixth rank)),
+        # can capture 1 square diagonally (only forwards, never backwards),
+        # and en passant
 
 # board class
 
