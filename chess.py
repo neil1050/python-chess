@@ -87,13 +87,46 @@ class queen(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
         super().getMoves(obstacles, sideLength)
 
-        # queen can move any number of squares in the 8 ordinal directions
+        # queen can move any number of squares in the 8 ordinal directions (equivalent to a rook and a bishop)
 
 class rook(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
         super().getMoves(obstacles, sideLength)
 
         # rook can move any number of squares in a straight line
+
+        currentIndex = self.position
+        obstacles[currentIndex] = False
+
+        legalMoves = []
+
+        # moving right
+        while not (obstacles[currentIndex] or (currentIndex % sideLength >= sideLength - 1)):
+            currentIndex += 1
+            legalMoves.append(currentIndex)
+
+        # reset between iterations
+        
+        currentIndex = self.position
+
+        # move left
+        while not (obstacles[currentIndex] or (currentIndex % sideLength <= 0)):
+            currentIndex -= 1
+            legalMoves.append(currentIndex)
+
+        # move up
+        currentIndex = self.position
+        while not (obstacles[currentIndex] or (currentIndex - sideLength <= 0)):
+            currentIndex -= sideLength
+            legalMoves.append(currentIndex)
+
+        # move down
+        currentIndex = self.position
+        while not (obstacles[currentIndex] or (currentIndex + sideLength >= sideLength * sideLength)):
+            currentIndex += sideLength
+            legalMoves.append(currentIndex)
+
+        return legalMoves
 
 class bishop(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
