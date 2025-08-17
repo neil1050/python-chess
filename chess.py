@@ -72,7 +72,46 @@ class knight(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
         super().getMoves(obstacles, sideLength)
 
+        legalMoves = []
+
         # knight moves 2 squares in a straight line (strictly), then moves one in the other axis
+        # if the position is not further than the final index after moving down twice
+        
+        # knight moves 2 squares down
+        if self.position + (2 * sideLength) < sideLength * sideLength:
+            # if the left and right side don't exceed the edge (to NOT provide incorrect indexes)...
+            if self.position % sideLength != 0:
+                legalMoves.append(self.position + (2 * sideLength) - 1)
+
+            if self.position % sideLength != 7:
+                legalMoves.append(self.position + (2 * sideLength) + 1)
+
+        # knight moves 2 squares up
+        if self.position - (2 * sideLength) >= 0:
+            # same code as the left and right side checks
+            if self.position % sideLength != 0:
+                legalMoves.append(self.position - (2 * sideLength) - 1)
+
+            if self.position % sideLength != 7:
+                legalMoves.append(self.position - (2 * sideLength) + 1)
+
+        # knight moves 2 squares left
+        if not self.position % sideLength <= 1:
+            if self.position - sideLength >= 0:
+                legalMoves.append(self.position - 2 - sideLength)
+                
+            if self.position + sideLength < sideLength * sideLength:
+                legalMoves.append(self.position - 2 + sideLength)
+
+        # knight moves 2 squares right
+        if not self.position % sideLength >= 6: 
+            if self.position - sideLength >= 0:
+                legalMoves.append(self.position + 2 - sideLength)
+
+            if self.position + sideLength < sideLength * sideLength:
+                legalMoves.append(self.position + 2 + sideLength)
+
+        return legalMoves
 
 class pawn(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
