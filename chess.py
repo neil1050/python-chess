@@ -45,22 +45,28 @@ class piece:
 # standard chess pieces definitions
 
 class king(piece):
-    pass
+    def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
+        super().getMoves(obstacles, sideLength)
 
 class queen(piece):
-    pass
+    def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
+        super().getMoves(obstacles, sideLength)
 
 class rook(piece):
-    pass
+    def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
+        super().getMoves(obstacles, sideLength)
 
 class bishop(piece):
-    pass
+    def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
+        super().getMoves(obstacles, sideLength)
 
 class knight(piece):
-    pass
+    def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
+        super().getMoves(obstacles, sideLength)
 
 class pawn(piece):
-    pass
+    def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
+        super().getMoves(obstacles, sideLength)
 
 # board class
 
