@@ -48,7 +48,40 @@ class king(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
         super().getMoves(obstacles, sideLength)
 
+        legalMoves = []
         # king can move one square in any of the 8 ordinal directions
+        flags = {"up": self.position - sideLength >= 0,
+                 "down": self.position + sideLength < sideLength * sideLength,
+                 "left": self.position % sideLength >= 1,
+                 "right": self.position % sideLength <= 6}  # which basic directions the king can move in
+
+        # THIS DOES NOT CONSIDER POTENTIAL ISSUES DUE TO CHECKS
+
+        if flags["up"] and flags["left"]:
+            legalMoves.append(self.position - sideLength - 1)
+        
+        if flags["up"]:
+            legalMoves.append(self.position - sideLength)
+
+        if flags["up"] and flags["right"]:
+            legalMoves.append(self.position - sideLength + 1)
+
+        if flags["right"]:
+            legalMoves.append(self.position + 1)
+
+        if flags["down"] and flags["right"]:
+            legalMoves.append(self.position + sideLength + 1)
+
+        if flags["down"]:
+            legalMoves.append(self.position + sideLength)
+
+        if flags["down"] and flags["left"]:
+            legalMoves.append(self.position + sideLength - 1)
+
+        if flags["left"]:
+            legalMoves.append(self.position - 1)
+
+        return legalMoves
 
 class queen(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
