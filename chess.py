@@ -134,6 +134,48 @@ class bishop(piece):
 
         # bishop can move any number of squares diagonally
 
+        currentIndex = self.position
+        obstacles[currentIndex] = False
+
+        legalMoves = []
+
+        # moving north east
+        while not (currentIndex % sideLength >= sideLength - 1 or
+                   currentIndex - sideLength < 0 or
+                   obstacles[currentIndex]):
+            currentIndex = currentIndex - sideLength + 1  # move one rank up and one file east
+            legalMoves.append(currentIndex)
+        
+        # reset index to prevent duplicate items
+        currentIndex = self.position
+
+        # moving south east
+        while not (currentIndex % sideLength >= sideLength - 1 or
+                   currentIndex + sideLength >= sideLength * sideLength or
+                   obstacles[currentIndex]):
+            currentIndex = currentIndex + sideLength + 1  # move one rank down and one file east
+            legalMoves.append(currentIndex)
+
+        currentIndex = self.position
+
+        # moving south west
+        while not (currentIndex % sideLength <= 0 or
+                   currentIndex + sideLength >= sideLength * sideLength or
+                   obstacles[currentIndex]):
+            currentIndex = currentIndex + sideLength - 1  # move one rank down and one file east
+            legalMoves.append(currentIndex)
+
+        currentIndex = self.position
+
+        # moving north west
+        while not (currentIndex % sideLength <= 0 or
+                   currentIndex - sideLength < 0 or
+                   obstacles[currentIndex]):
+            currentIndex = currentIndex - sideLength - 1  # move one rank up and one file west
+            legalMoves.append(currentIndex)
+
+        return legalMoves
+
 class knight(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
         super().getMoves(obstacles, sideLength)
