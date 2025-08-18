@@ -53,12 +53,27 @@ class board:
             }
     
     def convertSquareToIndex(self, square: str) -> int:
+        """Converts a square on the chess board to a list index
+
+        :self: board - the board the square index is wanted from
+        :square: str - the corresponding board square string (like a1)
+
+        board.convertSquareToIndex takes a SAN square and converts it to an index on the board itself."""
         square = square.strip()
         if not len(square) >= 2:
             raise Exception("Square is invalid")
         # ord square[0] - 97 converts the letter into an index of the alphabet
         return ((self.sideLength * (self.sideLength - int(square[1 : ]))) + 
                 (ord(square[0].casefold()) - 97))
+
+    def convertIndexToSquare(self, square: int):
+        """Converts a list index into a square on the chess board
+
+        :self: board - the board the square string is wanted from
+        :square: int - the index of the square on the board
+
+        board.convertIndexToSquare takes an index on the board and converts it to a SAN square."""
+        return chr((square % self.sideLength) + 97) + str(self.sideLength - (square // self.sideLength))
 
     def __init__(self, startingFen: str) -> None:
         """Initialises a chess board
