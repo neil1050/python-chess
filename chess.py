@@ -88,6 +88,12 @@ class queen(piece):
         super().getMoves(obstacles, sideLength)
 
         # queen can move any number of squares in the 8 ordinal directions (equivalent to a rook and a bishop)
+        rookEquivalent = rook(self.position, self.colour)
+        bishopEquivalent = bishop(self.position, self.colour)
+        
+        # get the rook and bishop moves and combine them to form the queen's moves
+        return (rookEquivalent.getMoves(obstacles, sideLength)
+                + bishopEquivalent.getMoves(obstacles, sideLength))
 
 class rook(piece):
     def getMoves(self, obstacles: list[bool], sideLength: int = 8) -> list[int]:
