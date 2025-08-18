@@ -233,7 +233,43 @@ class pawn(piece):
 
         # pawns can move 1 square forward (2 if it hasn't moved yet (ie on second or sixth rank)),
         # can capture 1 square diagonally (only forwards, never backwards),
-        # and en passant
+        # and en passant (not accounted for here, will be up to the implementation of board class)
+        # colour is important here
+
+        legalMoves = []
+
+        if self.colour == "w":
+            if not (self.position - sideLength < 0 or 
+                    obstacles[self.position - sideLength]):  # if the next row doesn't contain a piece NOR is it out of bounds
+                legalMoves.append(self.position - sideLength)
+
+            if obstacles[self.position - sideLength] and (
+                    not (self.position - sideLength < 0 or
+                         self.position % sideLength <= 0)):  # if there is a piece to the top left, and we aren't going out of bounds
+                    legalMoves.append(self.position - sideLength - 1)
+            
+            if obstacles[self.position - sideLength] and (
+                    not (self.position - sideLength < 0 or
+                         self.position % sideLength >= sideLength - 1)):  # if there is a piece to the top right, and we aren't going out of bounds
+                    legalMoves.append(self.position - sideLength + 1)
+
+            return legalMoves
+
+        # if colour == "b"
+        if not (self.position + sideLength >= sideLength * sideLength or 
+                obstacles[self.position + sideLength]):  # if the next row doesn't contain a piece NOR is it out of bounds
+            legalMoves.append(self.position + sideLength)
+
+        if obstacles[self.position + sideLength] and (
+                not (self.position + sideLength >= sideLength * sideLength or
+                     self.position % sideLength <= 0)):  # if there is a piece to the top left, and we aren't going out of bounds
+                legalMoves.append(self.position + sideLength - 1)
+            
+        if obstacles[self.position + sideLength] and (
+                not (self.position + sideLength >= sideLength * sideLength or
+                     self.position % sideLength >= sideLength - 1)):  # if there is a piece to the top right, and we aren't going out of bounds
+                legalMoves.append(self.position + sideLength + 1)
+        return legalMoves
 
 # board class
 
