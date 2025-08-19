@@ -380,15 +380,17 @@ class board:
         :self: board - a board of pieces
         :origin: int - the index of the piece
         :target: int - the target index of the piece (the new location)
-        :return: bool - if the piece can move to the target square
+        :return: bool - if the piece can move to the target square (excluding exceptions, which are handled only in move with completeAdminTasks = True)
         """
         return target in self.boardPieces[origin].getMoves([x != None for x in self.boardPieces])
 
-    def move(self, origin: int, target: int) -> None:
+    def move(self, origin: int, target: int, completeAdminTasks: bool = True) -> None:
         """Moves a piece based on an origin point and a target square
 
         :self: board - a board of pieces
-        :origin: int """
+        :origin: int - the index of the piece
+        :target: int - the target index of the piece (the new location)
+        :completeAdminTasks: bool - if the move is to complete all admin (switch turns, and deal with exceptions)"""
         self.boardPieces[target] = self.boardPieces[origin]
         self.boardPieces[origin] = None
         self.boardPieces[target].move(target)
