@@ -391,15 +391,40 @@ class board:
         :origin: int - the index of the piece
         :target: int - the target index of the piece (the new location)
         :completeAdminTasks: bool - if the move is to complete all admin (switch turns, and deal with exceptions)"""
-        if not completeAdminTasks:
+        def _move(origin: int, target: int) -> None:
+            # if we are allowing a move to occur
             self.boardPieces[target] = self.boardPieces[origin]
             self.boardPieces[origin] = None
             self.boardPieces[target].move(target)
+
+        if not completeAdminTasks:
+            _move(origin, target)
             return True
         # we need to deal with admin, like checking legal moves, and exceptions to standard rules
-        pass
+        if self.boardPieces[origin] == None:
+            return False  # moving nothing
+
+        if not isinstance(king, self.boardPieces[origin]):  # king requires special checks
+            # check if the move is in the getMoves list
+            if self.checkMove(origin, target):
+                _move(origin, target)
+            elif isinstance(pawn, self.boardPieces[origin]):
+                # check move using en passant
+                # this just allows a pawn to "move" into an en passant square
+                if target in self.boardPieces[origin].getMoves([index == self.enPassantSquare or piece != None
+                                                   for index, piece in enumerate(self.boardPieces)]):
+                    _move(origin, target)
+
+                    # capture the en-passanted piece
+                    if self.boardPieces[target].colour == "w":
+                        self.boardPieces[target + self.boardSideLength] = None
+                    else:
+                        self.boardPieces[target - self.boardSideLength] = None
+        else:  # if we are dealing with a king
+            pass
         # at the end we need to switch moves (assuming move is legal)
         if self.playerTurn == "w":
             self.playerTurn = "b"
         else:
             self.playerTurn = "w"
+        return True  # if we have reached the end of the function, we return True
