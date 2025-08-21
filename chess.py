@@ -384,13 +384,22 @@ class board:
         """
         return target in self.boardPieces[origin].getMoves([x != None for x in self.boardPieces])
 
-    def move(self, origin: int, target: int, completeAdminTasks: bool = True) -> None:
+    def move(self, origin: int, target: int, completeAdminTasks: bool = True) -> bool:
         """Moves a piece based on an origin point and a target square
 
         :self: board - a board of pieces
         :origin: int - the index of the piece
         :target: int - the target index of the piece (the new location)
         :completeAdminTasks: bool - if the move is to complete all admin (switch turns, and deal with exceptions)"""
-        self.boardPieces[target] = self.boardPieces[origin]
-        self.boardPieces[origin] = None
-        self.boardPieces[target].move(target)
+        if not completeAdminTasks:
+            self.boardPieces[target] = self.boardPieces[origin]
+            self.boardPieces[origin] = None
+            self.boardPieces[target].move(target)
+            return True
+        # we need to deal with admin, like checking legal moves, and exceptions to standard rules
+        pass
+        # at the end we need to switch moves (assuming move is legal)
+        if self.playerTurn == "w":
+            self.playerTurn = "b"
+        else:
+            self.playerTurn = "w"
