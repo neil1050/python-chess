@@ -8,6 +8,9 @@
 
 # base piece class
 
+from types import prepare_class
+
+
 class piece:
     def __init__(self, boardIndex: int, colour: str) -> None:
         """Initialises a chess piece
@@ -400,28 +403,77 @@ class board:
         if not completeAdminTasks:
             _move(origin, target)
             return True
+        
         # we need to deal with admin, like checking legal moves, and exceptions to standard rules
+        def _checkCastlingRights(colour) -> None:
+            # we won't be adding already gone castling rights
+            # look at current castling rights
+            rights = self.castling
+            if colour == "w":
+                colourRights = [right for right in rights if right.isupper()]
+            else:
+                colourRights = [right for right in rights if right.islower()]
+            
+            for right in colourRights:  # colour specific rights
+                if right.casefold() == "k":
+                    # kingside rook needs to be there
+                    pass
+
+        def _checkForCheck(colour) -> None:
+            pass
+
         if self.boardPieces[origin] == None:
             return False  # moving nothing
 
-        if not isinstance(king, self.boardPieces[origin]):  # king requires special checks
-            # check if the move is in the getMoves list
-            if self.checkMove(origin, target):
-                _move(origin, target)
-            elif isinstance(pawn, self.boardPieces[origin]):
-                # check move using en passant
-                # this just allows a pawn to "move" into an en passant square
-                if target in self.boardPieces[origin].getMoves([index == self.enPassantSquare or piece != None
-                                                   for index, piece in enumerate(self.boardPieces)]):
-                    _move(origin, target)
+        if self.boardPieces[origin].colour == self.boardPieces[target].colour:
+            return False  # capturing own colour
+        
+        originalBoard = self.boardPieces  # in case we need to revert due to check
 
-                    # capture the en-passanted piece
-                    if self.boardPieces[target].colour == "w":
-                        self.boardPieces[target + self.boardSideLength] = None
-                    else:
-                        self.boardPieces[target - self.boardSideLength] = None
-        else:  # if we are dealing with a king
-            pass
+        # castling flag will be used for check detection
+        hasCastled = False
+
+        # check if the move is in the getMoves list
+        if self.checkMove(origin, target):
+            _move(origin, target)
+        elif isinstance(pawn, self.boardPieces[origin]):
+            # check move using en passant
+            # this just allows a pawn to "move" into an en passant square
+            if target in self.boardPieces[origin].getMoves([index == self.enPassantSquare or piece != None
+                                               for index, piece in enumerate(self.boardPieces)]):
+                _move(origin, target)
+
+                # capture the en-passanted piece
+                if self.boardPieces[target].colour == "w":
+                    self.boardPieces[target + self.boardSideLength] = None
+                else:
+                    self.boardPieces[target - self.boardSideLength] = None
+            else:
+                return False
+        elif isinstance(king, self.boardPieces[origin]):
+            # castling exception
+            # king moves 2 spaces towards rook and rook moves next to the king
+
+            # the king mustn't pass a square that is attacked
+            # the king (nor the rook that he is castling to) may have moved
+            hasCastled = True  # we assume we can castle
+
+            # check if the castle is legal (i.e in castling rights list)
+            if (target == origin + 2) and (self.boardPieces[origin].colour in ("w", "b")):  # kingside
+                if self.boardPieces[origin].colour == "w":
+                    if not origin // self.sideLength == self.sideLength - 1:
+                        return False
+                    # king is on bottom row
+                    pass
+                else:
+                    pass
+            if (target == origin - 2) and (self.boardPieces[origin].colour in ("w", "b")):  # queenside castle
+                pass
+            else:
+                return False  # castle is invalid
+        else:
+            return False  # move is illegal
+
         # at the end we need to switch moves (assuming move is legal)
         if self.playerTurn == "w":
             self.playerTurn = "b"
