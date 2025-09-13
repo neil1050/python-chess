@@ -8,9 +8,6 @@
 
 # base piece class
 
-from types import prepare_class
-
-
 class piece:
     def __init__(self, boardIndex: int, colour: str) -> None:
         """Initialises a chess piece
@@ -406,18 +403,64 @@ class board:
         
         # we need to deal with admin, like checking legal moves, and exceptions to standard rules
         def _checkCastlingRights(colour) -> None:
-            # we won't be adding already gone castling rights
+            # we won't be adding already removed castling rights
             # look at current castling rights
             rights = self.castling
             if colour == "w":
                 colourRights = [right for right in rights if right.isupper()]
             else:
                 colourRights = [right for right in rights if right.islower()]
+            del rights
+            
+            kingIndex = -1
+            for index, piece in self.boardPieces:
+                if piece != None:
+                    if isinstance(piece, king) and piece.colour == colour:
+                        kingIndex = index
+                        break  # there should only be one king
+            if kingIndex == -1:
+                # do not attempt to check if there is no king
+                return
+            
+            kingInCorrectRank = False
+            if ((colour == "w" and kingIndex // self.sideLength == self.sideLength - 1) or
+                (colour == "b" and kingIndex // self.sideLength == 0)):
+                kingInCorrectRank = True
             
             for right in colourRights:  # colour specific rights
+                if not (kingIndex % self.sideLength == 4 and kingInCorrectRank):  # if king isn't in e file or in the correct rank
+                    # can't castle if king has moved
+                    self.castling.remove(right)
+                    continue
+
+                currentIndex = kingIndex
+                rookDetected = False
                 if right.casefold() == "k":
                     # kingside rook needs to be there
-                    pass
+                    while currentIndex % self.sideLength < self.sideLength - 1:
+                        currentIndex += 1
+                        if isinstance(self.boardPieces[currentIndex], rook) and self.boardPieces[currentIndex].colour == colour:
+                            if currentIndex - kingIndex >= 2:
+                                rookDetected = True
+                                break
+
+                    if not rookDetected:
+                        self.castling.remove(right)
+                    continue
+                
+                currentIndex = kingIndex
+                rookDetected = False
+                if right.casefold() == "q":
+                    while currentIndex % self.sideLength > 0:
+                        currentIndex -= 1
+                        if isinstance(self.boardPieces[currentIndex], rook) and self.boardPieces[currentIndex].colour == colour:
+                            if kingIndex - currentIndex >= 2:
+                                rookDetected = True
+                                break
+
+                    if not rookDetected:
+                        self.castling.remove(right)
+                    continue
 
         def _checkForCheck(colour) -> None:
             pass
@@ -445,9 +488,9 @@ class board:
 
                 # capture the en-passanted piece
                 if self.boardPieces[target].colour == "w":
-                    self.boardPieces[target + self.boardSideLength] = None
+                    self.boardPieces[target + self.sideLength] = None
                 else:
-                    self.boardPieces[target - self.boardSideLength] = None
+                    self.boardPieces[target - self.sideLength] = None
             else:
                 return False
         elif isinstance(king, self.boardPieces[origin]):
