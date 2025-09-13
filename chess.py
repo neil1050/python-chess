@@ -462,8 +462,21 @@ class board:
                         self.castling.remove(right)
                     continue
 
-        def _checkForCheck(colour) -> None:
-            pass
+        def _checkForCheck(colour) -> bool:
+            kingIndex = -1
+            for index, piece in self.boardPieces:
+                if piece != None:
+                    if isinstance(piece, king) and piece.colour == colour:
+                        kingIndex = index
+                        break  # there should only be one king
+            if kingIndex == -1:
+                return False
+            # execute get moves on all black pieces, if any piece
+            # attacks the king, then the king is in check
+            for index, piece in enumerate(self.boardPieces):
+                if self.checkMove(index, kingIndex) and piece.colour != colour:
+                    return True
+            return False
 
         if self.boardPieces[origin] == None:
             return False  # moving nothing
