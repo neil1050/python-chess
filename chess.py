@@ -336,6 +336,7 @@ class board:
 
 importedMods = {}
 modIdentifier = {}
+mappedModIdentifiers = []
 
 def importMods(modsList: list[str] | None = None) -> None:
     """Imports mods based on a list of modules
@@ -396,4 +397,32 @@ def mapMod(identifier: str) -> None:
     :identifier: str - the identifier of the mod to map on to the dict
 
     mapMod takes a mod identifier and maps that mod on to the board piece mappings dict"""
+    if identifier in mappedModIdentifiers:
+        return
     board.pieceMappings.update(importedMods[modIdentifier[identifier]]["classMappings"])
+    mappedModIdentifiers.append(identifier)
+
+def unmapMod(identifier: str) -> None:
+    """Removes a mod from the piece mappings dict
+
+    :identifier: str - the identifier of the mods containing the pieces to remove
+
+    unmapMod takes a mod identifier and unmaps that from the board piece mappings dict"""
+
+    # prepare to remap the dict
+    remappedModIdentifiers = mappedModIdentifiers
+    remappedModIdentifiers.remove(identifier)
+    # remap the entire dict
+
+    board.pieceMappings = {
+            "k": king,
+            "q": queen,
+            "r": rook,
+            "b": bishop,
+            "n": knight,
+            "p": pawn
+            }
+
+    mappedModIdentifiers.clear()
+    for modIdentifier in remappedModIdentifiers:  # the highest precedent mods are imported last
+        mapMod(modIdentifier)
