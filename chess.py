@@ -514,11 +514,78 @@ class board:
             # the king (nor the rook that he is castling to) may have moved
             hasCastled = True  # we assume we can castle
 
+            _checkCastlingRights(self.boardPieces[origin].colour)
+
+            if self.boardPieces[origin].colour == "w":
+                castleRightToCheck = str.upper  # the uppercase rights (whites)
+            else:
+                castleRightToCheck = str.lower  # the lowercase rights (blacks)
+
             # check if the castle is legal (i.e in castling rights list)
             if (target == origin + 2) and (self.boardPieces[origin].colour in ("w", "b")):  # kingside
-                pass
+                if not castleRightToCheck("k") in self.castling:
+                    return False
+                # if castle is still in the castling rights
+                # check for blocking pieces between
+                
+                currentIndex = origin
+                rookIndex = -1
+                while currentIndex % self.sideLength < self.sideLength - 1:
+                    currentIndex += 1
+                    if ((self.boardPieces[currentIndex] is not None) and
+                        ((not isinstance(self.boardPieces[currentIndex], rook)) or currentIndex - origin < 3)):
+                        # there is a piece in the way
+                        return False
+                    elif isinstance(self.boardPieces[currentIndex], rook):
+                        rookIndex = currentIndex
+                        break  # the rook has been found
+                if rookIndex < 0:
+                    return False  # no rook found
+
+                _move(origin, origin + 1)
+                if _checkForCheck(self.boardPieces[origin + 1].colour):
+                    # revert the state
+                    self.boardPieces = originalBoard
+                    return False
+                _move(origin + 1, target)
+                if _checkForCheck(self.boardPieces[target].colour):
+                    self.boardPieces = originalBoard
+                    return False
+                # the castle has been proven valid
+                _move(rookIndex, target - 1)
+
             if (target == origin - 2) and (self.boardPieces[origin].colour in ("w", "b")):  # queenside castle
-                pass
+                if not castleRightToCheck("q") in self.castling:
+                    return False
+                # if castle is still in the castling rights
+                # check for blocking pieces between
+                
+                currentIndex = origin
+                rookIndex = -1
+                while currentIndex % self.sideLength > 0:
+                    currentIndex -= 1
+                    if ((self.boardPieces[currentIndex] is not None) and
+                        ((not isinstance(self.boardPieces[currentIndex], rook)) or origin - currentIndex < 3)):
+                        # there is a piece in the way
+                        return False
+                    elif isinstance(self.boardPieces[currentIndex], rook):
+                        rookIndex = currentIndex
+                        break  # the rook has been found
+                if rookIndex < 0:
+                    return False  # no rook found
+
+                _move(origin, origin - 1)
+                if _checkForCheck(self.boardPieces[origin - 1].colour):
+                    # revert the state
+                    self.boardPieces = originalBoard
+                    return False
+                _move(origin - 1, target)
+                if _checkForCheck(self.boardPieces[target].colour):
+                    self.boardPieces = originalBoard
+                    return False
+                # the castle has been proven valid
+                _move(rookIndex, target + 1)
+                
             else:
                 return False  # castle is invalid
         else:
