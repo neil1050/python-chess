@@ -337,7 +337,13 @@ class board:
 importedMods = {}
 modIdentifier = {}
 
-def importMods(modsList: list[str] | None = None):
+def importMods(modsList: list[str] | None = None) -> None:
+    """Imports mods based on a list of modules
+
+    :modsList: list[str] | None - the list of modules to import
+
+    importMods takes a list of modules that can be accessed and attempts to import them,
+    and read their manifests"""
     global importedMods
 
     if modsList is None:
