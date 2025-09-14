@@ -389,3 +389,11 @@ def importMods(modsList: list[str] | None = None) -> None:
             print("Identifier is an invalid value, skipping...")
             del importedMods[mod]
             continue
+
+def mapMod(identifier: str) -> None:
+    """Adds a mod to the piece mappings dict
+
+    :identifier: str - the identifier of the mod to map on to the dict
+
+    mapMod takes a mod identifier and maps that mod on to the board piece mappings dict"""
+    board.pieceMappings.update(importedMods[modIdentifier[identifier]]["classMappings"])
