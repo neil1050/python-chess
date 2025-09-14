@@ -335,6 +335,7 @@ class board:
         return True  # if we have reached the end of the function, we return True
 
 importedMods = {}
+modIdentifier = {}
 
 def importMods(modsList: list[str] | None = None):
     global importedMods
@@ -360,3 +361,25 @@ def importMods(modsList: list[str] | None = None):
             continue
         finally:
             del importedMod
+
+        modManifest = importedMods[mod]["manifest"]
+        try:
+            importedMods[mod]["identifier"] = modManifest.identifier
+            if modManifest.identifier is None or not isinstance(modManifest.identifier, str):
+                raise Exception("Identifier is an invalid value")
+
+            importedMods[mod]["name"] = modManifest.name
+            importedMods[mod]["author"] = modManifest.author
+            importedMods[mod]["shortDesc"] = modManifest.description
+
+            importedMods[mod]["classMappings"] = modManifest.mappings
+
+            modIdentifier[importedMods[mod]["identifier"]] = mod
+        except NameError:
+            print("Manifest incomplete, skipping...")
+            del importedMods[mod]
+            continue
+        except Exception:
+            print("Identifier is an invalid value, skipping...")
+            del importedMods[mod]
+            continue
