@@ -492,7 +492,7 @@ class board:
         # check if the move is in the getMoves list
         if self.checkMove(origin, target):
             _move(origin, target)
-        elif isinstance(pawn, self.boardPieces[origin]):
+        elif isinstance(self.boardPieces[origin], pawn):
             # check move using en passant
             # this just allows a pawn to "move" into an en passant square
             if target in self.boardPieces[origin].getMoves([index == self.enPassantSquare or piece != None
@@ -506,7 +506,7 @@ class board:
                     self.boardPieces[target - self.sideLength] = None
             else:
                 return False
-        elif isinstance(king, self.boardPieces[origin]):
+        elif isinstance(self.boardPieces[origin], king):
             # castling exception
             # king moves 2 spaces towards rook and rook moves next to the king
 
@@ -516,13 +516,7 @@ class board:
 
             # check if the castle is legal (i.e in castling rights list)
             if (target == origin + 2) and (self.boardPieces[origin].colour in ("w", "b")):  # kingside
-                if self.boardPieces[origin].colour == "w":
-                    if not origin // self.sideLength == self.sideLength - 1:
-                        return False
-                    # king is on bottom row
-                    pass
-                else:
-                    pass
+                pass
             if (target == origin - 2) and (self.boardPieces[origin].colour in ("w", "b")):  # queenside castle
                 pass
             else:
