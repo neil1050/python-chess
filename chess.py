@@ -223,9 +223,6 @@ class board:
         
         originalBoard = self.boardPieces  # in case we need to revert due to check
 
-        # castling flag will be used for check detection
-        hasCastled = False
-
         # check if the move is in the getMoves list
         if self.checkMove(origin, target):
             _move(origin, target)
@@ -249,7 +246,6 @@ class board:
 
             # the king mustn't pass a square that is attacked
             # the king (nor the rook that he is castling to) may have moved
-            hasCastled = True  # we assume we can castle
 
             _checkCastlingRights(self.boardPieces[origin].colour)
 
