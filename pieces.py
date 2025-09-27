@@ -209,13 +209,18 @@ class pawn(piece):
                     obstacles[self.position - sideLength]):  # if the next row doesn't contain a piece NOR is it out of bounds
                 legalMoves.append(self.position - sideLength)
 
-            if obstacles[self.position - sideLength] and (
+                if not ((self.position - (2 * sideLength) < 0 or
+                        obstacles[self.position - (2 * sideLength)])
+                        and self.position // sideLength == sideLength - 2):  # if the second row is free
+                    legalMoves.append(self.position - (2 * sideLength))
+
+            if obstacles[self.position - sideLength - 1] and (
                     not (self.position - sideLength < 0 or
                          self.position % sideLength <= 0)):  # if there is a piece to the top left, and we aren't going out of bounds
                     legalMoves.append(self.position - sideLength - 1)
             
-            if obstacles[self.position - sideLength] and (
-                    not (self.position - sideLength < 0 or
+            if obstacles[self.position - sideLength + 1] and (
+                    not (self.position - sideLength + 1 < 0 or
                          self.position % sideLength >= sideLength - 1)):  # if there is a piece to the top right, and we aren't going out of bounds
                     legalMoves.append(self.position - sideLength + 1)
 
@@ -225,14 +230,19 @@ class pawn(piece):
         if not (self.position + sideLength >= sideLength * sideLength or 
                 obstacles[self.position + sideLength]):  # if the next row doesn't contain a piece NOR is it out of bounds
             legalMoves.append(self.position + sideLength)
+                
+            if not ((self.position + (2 * sideLength) >= sideLength * sideLength or
+                    obstacles[self.position + (2 * sideLength)])
+                    and self.position // sideLength == 1):  # if the second row is free
+                legalMoves.append(self.position + (2 * sideLength))
 
-        if obstacles[self.position + sideLength] and (
-                not (self.position + sideLength >= sideLength * sideLength or
+        if obstacles[self.position + sideLength - 1] and (
+                not (self.position + sideLength - 1 >= sideLength * sideLength or
                      self.position % sideLength <= 0)):  # if there is a piece to the top left, and we aren't going out of bounds
                 legalMoves.append(self.position + sideLength - 1)
             
-        if obstacles[self.position + sideLength] and (
-                not (self.position + sideLength >= sideLength * sideLength or
+        if obstacles[self.position + sideLength + 1] and (
+                not (self.position + sideLength + 1 >= sideLength * sideLength or
                      self.position % sideLength >= sideLength - 1)):  # if there is a piece to the top right, and we aren't going out of bounds
                 legalMoves.append(self.position + sideLength + 1)
         return legalMoves
